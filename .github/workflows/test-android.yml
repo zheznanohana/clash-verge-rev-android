@@ -1,0 +1,12 @@
+name: Test Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: echo "Hello"
