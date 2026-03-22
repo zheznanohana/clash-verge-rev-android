@@ -27,7 +27,7 @@ jobs:
         with:
           targets: aarch64-linux-android
 
-      - name: Setup Android SDK (manual)
+      - name: Setup Android SDK + NDK
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip wget
@@ -39,9 +39,12 @@ jobs:
           export ANDROID_HOME=$HOME/android-sdk
           export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
           yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "ndk;26.1.10909125"
+          export NDK_HOME=$ANDROID_HOME/ndk/26.1.10909125
           echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "NDK_HOME=$NDK_HOME" >> $GITHUB_ENV
+          echo "PATH=$PATH:$NDK_HOME" >> $GITHUB_ENV
 
       - name: Install deps
         run: |
