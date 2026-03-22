@@ -1,0 +1,52 @@
+name: Android APK Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9.0
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.1.10909125'
+
+      - name: Install dependencies
+        run: |
+          pnpm install
+          cargo install cargo-ndk
+
+      - name: Build Android APK
+        run: |
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          pnpm tauri android init || true
+          pnpm tauri android build --apk --debug --target aarch64-linux-android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: clash-verge-rev-android-debug
+          path: |
+            **/app-universal-arm64-v8a-debug.apk
+            **/app-arm64-v8a-debug.apk
+          retention-days: 14
