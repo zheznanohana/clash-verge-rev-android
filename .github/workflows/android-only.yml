@@ -1,0 +1,58 @@
+name: Android APK Only
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'src-tauri/**'
+      - '.github/workflows/android-only.yml'
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - name: Setup Android
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 9.0
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0 ndk;26.1.10909125'
+
+      - name: Install deps
+        run: |
+          pnpm install
+          cargo install cargo-ndk --force
+
+      - name: Build APK
+        run: |
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          export NDK_HOME=$ANDROID_SDK_ROOT/ndk/26.1.10909125
+          pnpm tauri android init || true
+          pnpm tauri android build --apk --debug --target aarch64-linux-android
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: clash-verge-rev-android-arm64
+          path: '**/*arm64*.apk'
+          retention-days: 14
