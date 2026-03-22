@@ -1,0 +1,49 @@
+name: Simple Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: '10'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install deps
+        run: |
+          pnpm install
+          cargo install cargo-ndk
+
+      - name: Build APK
+        run: |
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          pnpm tauri android init || true
+          pnpm tauri android build --apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: clash-verge-rev-android
+          path: '**/*.apk'
+          retention-days: 14
