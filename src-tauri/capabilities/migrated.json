@@ -2,19 +2,29 @@
   "identifier": "migrated",
   "description": "permissions that were migrated from v1",
   "local": true,
-  "windows": ["main"],
+  "windows": [
+    "main"
+  ],
   "permissions": [
     "core:default",
     "fs:allow-read-file",
     "fs:allow-exists",
     {
       "identifier": "fs:scope",
-      "allow": ["$APPDATA/**", "$RESOURCE/../**", "**"]
+      "allow": [
+        "$APPDATA/**",
+        "$RESOURCE/../**",
+        "**"
+      ]
     },
     "fs:allow-write-file",
     {
       "identifier": "fs:scope",
-      "allow": ["$APPDATA/**", "$RESOURCE/../**", "**"]
+      "allow": [
+        "$APPDATA/**",
+        "$RESOURCE/../**",
+        "**"
+      ]
     },
     "fs:allow-app-read",
     "fs:allow-app-read-recursive",
@@ -68,11 +78,6 @@
     "shell:allow-spawn",
     "shell:allow-stdin-write",
     "dialog:allow-open",
-    "global-shortcut:allow-is-registered",
-    "global-shortcut:allow-register",
-    "global-shortcut:allow-register-all",
-    "global-shortcut:allow-unregister",
-    "global-shortcut:allow-unregister-all",
     "process:allow-restart",
     "process:allow-exit",
     "clipboard-manager:allow-read-text",
