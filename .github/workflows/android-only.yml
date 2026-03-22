@@ -48,7 +48,7 @@ jobs:
           export ANDROID_HOME=$ANDROID_SDK_ROOT
           export NDK_HOME=$ANDROID_SDK_ROOT/ndk/26.1.10909125
           pnpm tauri android init || true
-          pnpm tauri android build --apk --debug --target aarch64-linux-android
+          pnpm tauri android build --apk --debug --target aarch64
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
